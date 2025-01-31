@@ -19,15 +19,24 @@ class MyApp extends StatelessWidget {
 }
 
 class TListScreen extends StatelessWidget {
-  final List<Map<String, String>> tuitions = [
+  // Updated to include multiple images for each tuition
+  final List<Map<String, dynamic>> tuitions = [
     {
-      "image": "https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg?auto=compress&cs=tinysrgb&w=600",
+      "images": [
+        "https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/4145153/pexels-photo-4145153.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/4145190/pexels-photo-4145190.jpeg?auto=compress&cs=tinysrgb&w=600",
+      ],
       "name": "Hindi Tuition",
       "price": "₹999/Month",
       "offer": "First Day Free"
     },
     {
-      "image": "https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg?auto=compress&cs=tinysrgb&w=600",
+      "images": [
+        "https://images.pexels.com/photos/4144923/pexels-photo-4144923.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/4145153/pexels-photo-4145153.jpeg?auto=compress&cs=tinysrgb&w=600",
+        "https://images.pexels.com/photos/4145190/pexels-photo-4145190.jpeg?auto=compress&cs=tinysrgb&w=600",
+      ],
       "name": "Maths Tuition",
       "price": "₹1199/Month",
       "offer": "First day free"
@@ -51,7 +60,7 @@ class TListScreen extends StatelessWidget {
             ),
             SizedBox(height: 10),
             SizedBox(
-              height: 300, // Height of the card
+              height: 300,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: tuitions.length,
@@ -68,7 +77,7 @@ class TListScreen extends StatelessWidget {
 }
 
 class TuitionCard extends StatelessWidget {
-  final Map<String, String> tuition;
+  final Map<String, dynamic> tuition;
 
   const TuitionCard(this.tuition, {super.key});
 
@@ -97,10 +106,9 @@ class TuitionCard extends StatelessWidget {
               Hero(
                 tag: tuition["name"]!,
                 child: ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(15),
-                  ),
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
                   child: CachedNetworkImage(
-                    imageUrl: tuition["image"]!,
+                    imageUrl: tuition["images"][0],
                     height: 140,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -134,7 +142,8 @@ class TuitionCard extends StatelessWidget {
                           child: OutlinedButton(
                             onPressed: () {},
                             style: OutlinedButton.styleFrom(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                             ),
                             child: Text("Free Day"),
                           ),
@@ -146,12 +155,14 @@ class TuitionCard extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => TuitionDetailScreen(tuition: tuition),
+                                  builder: (context) =>
+                                      TuitionDetailScreen(tuition: tuition),
                                 ),
                               );
                             },
                             style: ElevatedButton.styleFrom(
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
                             ),
                             child: Text("Buy Now"),
                           ),
@@ -168,5 +179,3 @@ class TuitionCard extends StatelessWidget {
     );
   }
 }
-
-
