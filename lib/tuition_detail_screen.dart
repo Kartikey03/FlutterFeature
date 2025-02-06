@@ -48,6 +48,7 @@ class _TuitionDetailScreenState extends State<TuitionDetailScreen> {
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
+
                 child: const Text(
                   "First Free Day",
                   style: TextStyle(fontSize: 16),

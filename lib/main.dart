@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:newflutter/post_request.dart';
 import 'package:newflutter/tuition_detail_screen.dart';
+import 'package:http/http.dart' as http;
+
+import 'QR_file.dart';
 
 void main() {
   runApp(MyApp());
@@ -13,7 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TListScreen(),
+      home: QRCodeDisplay(message: 'Flutter is Amazing',),
     );
   }
 }
@@ -140,7 +144,15 @@ class TuitionCard extends StatelessWidget {
                       children: [
                         Flexible(
                           child: OutlinedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      PostsWidget(),
+                                ),
+                              );
+                            },
                             style: OutlinedButton.styleFrom(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
