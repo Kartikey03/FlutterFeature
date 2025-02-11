@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:newflutter/batch_booking.dart';
+import 'package:newflutter/class_booking.dart';
 import 'package:newflutter/post_request.dart';
 import 'package:newflutter/tuition_detail_screen.dart';
 import 'package:http/http.dart' as http;
@@ -17,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: QRCodeDisplay(message: 'Flutter is Amazing',),
+      home: TuitionApp(),
     );
   }
 }
