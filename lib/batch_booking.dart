@@ -56,6 +56,7 @@ class _ClassScheduleScreenState extends State<ClassScheduleScreen> {
       appBar: AppBar(
         title: const Text('Class Schedule'),
         actions: [
+
           TextButton.icon(
             icon: const Icon(Icons.person),
             onPressed: () => _showTeachersDialog(context),

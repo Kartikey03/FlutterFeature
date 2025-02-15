@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TuitionApp(),
+      home: AnimatedQRCodeDisplay(message: "Hello This is Flutter"),
     );
   }
 }
@@ -74,6 +74,7 @@ class TListScreen extends StatelessWidget {
                   return TuitionCard(tuitions[index]);
                 },
               ),
+
             ),
           ],
         ),

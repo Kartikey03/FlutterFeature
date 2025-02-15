@@ -1,88 +1,70 @@
-import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
-import 'dart:ui' as ui;
-import 'package:flutter/services.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
-class QRCodeDisplay extends StatefulWidget {
+class AnimatedQRCodeDisplay extends StatefulWidget {
   final String message;
   final String title;
-  final String assetImagePath;
   final double qrSize;
-  final double embeddedImageSize;
   final Color qrColor;
   final Color emptyColor;
   final TextStyle? messageStyle;
-  final Widget loadingWidget;
+  final Widget backWidget;
 
-  const QRCodeDisplay({
+  const AnimatedQRCodeDisplay({
     super.key,
     required this.message,
     this.title = "QR Code Display",
-    this.assetImagePath = 'assets/images/ln.png',
     this.qrSize = 300.0,
-    this.embeddedImageSize = 70.0,
     this.qrColor = Colors.black,
     this.emptyColor = Colors.white70,
     this.messageStyle,
-    this.loadingWidget = const CircularProgressIndicator(),
+    this.backWidget = const Center(
+      child: Text(
+        'Tap to scan',
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+      ),
+    ),
   });
 
   @override
-  _QRCodeDisplayState createState() => _QRCodeDisplayState();
+  _AnimatedQRCodeDisplayState createState() => _AnimatedQRCodeDisplayState();
 }
 
-class _QRCodeDisplayState extends State<QRCodeDisplay> {
-  Future<ui.Image> _loadImage() async {
-    final completer = Completer<ui.Image>();
-    try {
-      final data = await rootBundle.load(widget.assetImagePath);
-      ui.decodeImageFromList(data.buffer.asUint8List(), completer.complete);
-    } catch (e) {
-      completer.completeError('Failed to load image: $e');
-    }
-    return completer.future;
+class _AnimatedQRCodeDisplayState extends State<AnimatedQRCodeDisplay>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  bool _showingQR = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+      value: 1.0, // Start with the controller at the end
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _toggleCard() {
+    setState(() {
+      if (_showingQR) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+      _showingQR = !_showingQR;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final qrCode = FutureBuilder(
-      future: _loadImage(),
-      builder: (ctx, snapshot) {
-        if (snapshot.hasError) {
-          return SizedBox(
-            height: widget.qrSize,
-            width: widget.qrSize,
-            child: Center(
-              child: Text('Error loading image: ${snapshot.error}'),
-            ),
-          );
-        }
-
-        if (!snapshot.hasData) {
-          return SizedBox(
-            height: widget.qrSize,
-            width: widget.qrSize,
-            child: Center(child: widget.loadingWidget),
-          );
-        }
-
-        return CustomPaint(
-          size: Size.square(widget.qrSize),
-          painter: QrPainter(
-            data: widget.message,
-            version: QrVersions.auto,
-            color: widget.qrColor,
-            emptyColor: widget.emptyColor,
-            embeddedImage: snapshot.data,
-            embeddedImageStyle: QrEmbeddedImageStyle(
-              size: Size.square(widget.embeddedImageSize),
-            ),
-          ),
-        );
-      },
-    );
-
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
@@ -92,13 +74,54 @@ class _QRCodeDisplayState extends State<QRCodeDisplay> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
-              width: widget.qrSize,
-              child: qrCode,
+            GestureDetector(
+              onTap: _toggleCard,
+              child: AnimatedBuilder(
+                animation: _controller,
+                builder: (context, child) {
+                  return Transform(
+                    transform: Matrix4.identity()
+                      ..setEntry(3, 2, 0.001)
+                      ..rotateY(pi * _controller.value),
+                    alignment: Alignment.center,
+                    child: _controller.value >= 0.5
+                        ? Transform(
+                            transform: Matrix4.identity()..rotateY(pi),
+                            alignment: Alignment.center,
+                            child: Card(
+                              elevation: 8,
+                              child: Container(
+                                width: widget.qrSize,
+                                height: widget.qrSize,
+                                padding: const EdgeInsets.all(16),
+                                child: widget.backWidget,
+                              ),
+                            ),
+                          )
+                        : Card(
+                            elevation: 8,
+                            child: Container(
+                              width: widget.qrSize,
+                              height: widget.qrSize,
+                              padding: const EdgeInsets.all(16),
+                              child: CustomPaint(
+                                size: Size.square(widget.qrSize),
+                                painter: QrPainter(
+                                  data: widget.message,
+                                  version: QrVersions.auto,
+                                  color: widget.qrColor,
+                                  emptyColor: widget.emptyColor,
+                                ),
+                              ),
+                            ),
+                          ),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 30),
             Text(
-              widget.message,
+              _showingQR ? widget.message : 'Tap card to reveal QR code',
               style: widget.messageStyle ??
                   const TextStyle(
                     fontSize: 20,
